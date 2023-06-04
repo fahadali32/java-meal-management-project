@@ -1,0 +1,17 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "/home/fahad/Downloads/commons-logging-1.1.3.jar",
+        "/home/fahad/Downloads/jxmapviewer2-2.5.jar",
+        "jar_files/swingx-core-1.6.5-1.jar",
+        "jar_files/swingx-graphics-1.6.5-1.jar",
+        "jar_files/swingx-action-1.6.5-1.jar",
+        "jar_files/swingx-autocomplete-1.6.5-1.jar",
+        "jar_files/swingx-common-1.6.5-1.jar",
+        "jar_files/swingx-painters-1.6.5-1.jar",
+        "jar_files/swingx-plaf-1.6.5-1.jar",
+        "jar_files/sqlite-jdbc-3.42.0.0.jar",
+        "jar_files/json-20230227.jar"
+    ],
+    "java.debug.settings.onBuildFailureProceed": true
+}

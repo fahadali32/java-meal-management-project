@@ -1,0 +1,6 @@
+<dependency>
+	<groupId>org.swinglabs.swingx</groupId>
+	<artifactId>swingx-core</artifactId>
+	<version>1.6.5-1</version>
+</dependency>
+<!-- Thanks for using https://jar-download.com -->
