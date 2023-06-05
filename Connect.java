@@ -7,8 +7,9 @@ import java.sql.Statement;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import javax.swing.JFrame;
-
+import java.time.LocalDate;
 // import java.sql.ResultSet;
+import javax.swing.*;
 import java.sql.SQLException;
 
 class Connect {
@@ -45,21 +46,36 @@ class Connect {
 
     public void connect(String username, String firstname, String lastname, String password) {
         Connection conn = null;
+        PreparedStatement stmt = null;
         try {
             // db parameters
+            JFrame f;
+            f = new JFrame();
             String url = "jdbc:sqlite:meal.db";
             // create a connection to the database
             conn = DriverManager.getConnection(url);
             Statement statement = conn.createStatement();
-            // ResultSet resultSet = statement.executeQuery("select * from auth");
-            // while (resultSet.next()) {
-            // String value = resultSet.getString("first_name");
-            // System.out.println(value);
-            // }
-            System.out.println(username);
-            statement.executeUpdate("insert into auth(username,first_name,last_name,password) values ('" + username
-                    + "','" + firstname + "','" + lastname + "','" + password + "')");
-            System.out.println("Connection to SQLite has been established.");
+
+            LocalDate dateTime = LocalDate.now();
+
+            String query = "select * from auth where username=?";
+            stmt = conn.prepareStatement(query);
+            stmt.setString(1, username);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                System.out.println("Exists Data");
+                JOptionPane.showMessageDialog(f, "Please use different username");
+            } else {
+                statement.executeUpdate("insert into auth(username,first_name,last_name,password) values ('" + username
+                        + "','" + firstname + "','" + lastname + "','" + password + "')");
+                statement.executeUpdate(
+                        "insert into user_details(full_name,total_amount,today_cost,date,username) values ('"
+                                + firstname + " " + lastname
+                                + "','" + 0 + "','" + 0 + "','" + dateTime + "','" + username + "')");
+                JOptionPane.showMessageDialog(f, "Register successfull.Please click to the back to login button");
+                System.out.println("Connection to SQLite has been established.");
+            }
+
             // resultSet.close();
             statement.close();
 
@@ -126,9 +142,9 @@ class Connect {
             String query = "select * from auth";
             conn = DriverManager.getConnection(url);
             stmt = conn.prepareStatement(query);
-            
+
             ResultSet rs = stmt.executeQuery();
-            
+
             while (rs.next()) {
                 String fname = rs.getString("first_name");
                 String lname = rs.getString("last_name");
@@ -137,7 +153,7 @@ class Connect {
                 json.put("last_name", lname);
                 jsonArray.put(json);
             }
-            
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

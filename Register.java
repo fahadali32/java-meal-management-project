@@ -103,17 +103,12 @@ class RegisterPanel extends JPanel {
         registerBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // con.connect("INSERT INTO auth (username,first_name,last_name,password )
-                // VALUES ( %s,%s,%s,%s
-                // )",username.getText(),first_name.getText(),last_name.getText(),password.getText());
-                // System.out.println();
-                // System.out.println(username.getText());
+
                 String uname = username.getText();
                 String ftName = first_name.getText();
                 String ltName = last_name.getText();
                 String passd = password.getText();
 
-                // String query = "INSERT INTO auth (username,first_name,last_name,password ) VALUES ( ?, ?, ?, ?)";
                 con.connect(uname, ftName, ltName, passd);
             }
         });

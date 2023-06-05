@@ -14,6 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -69,25 +70,37 @@ class DashboardPanel extends JPanel {
 
         gbc.gridy = 2;
         // String data[][] = { { "101", "Amit", "670000" },
-        //         { "102", "Jai", "780000" },
-        //         { "101", "Sachin", "700000" } };
+        // { "102", "Jai", "780000" },
+        // { "101", "Sachin", "700000" } };
         // String column[] = { "ID", "NAME", "MONEY" };
         // JTable jt = new JTable(data, column);
         // jt.setBounds(50, 1, 1200, 700);
         // JScrollPane sp = new JScrollPane(jt);
         // add(sp, gbc);
+        // Create a DefaultTableModel
+        DefaultTableModel model = new DefaultTableModel();
 
-        
+        // Add columns to the model
+        model.addColumn("Name");
+        model.addColumn("Toll");
+        model.addColumn("Age");
 
         Connect connect = new Connect();
         JSONArray jsonArray = connect.ShowUser();
+        // Create the JTable using the model
+        JTable table;
+        table = new JTable(model);
+
+        // Add the table to a scroll pane
+        JScrollPane scrollPane = new JScrollPane(table);
+        add(scrollPane, gbc);
 
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONObject json = jsonArray.getJSONObject(i);
-            String username = json.getString("first_name");
-            System.out.println(username);
+            String first_name = json.getString("first_name");
+            String last_name = json.getString("first_name");
             
-            
+            model.addRow(new Object[]{ first_name, last_name});
         }
 
     }
