@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 public class Session {
-    public Session(String username) {
+    void setSession(String username) {
         try {
             FileWriter myWriter = new FileWriter("session.txt");
             myWriter.write(username);

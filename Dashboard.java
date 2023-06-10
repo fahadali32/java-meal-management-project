@@ -4,18 +4,25 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
+import org.jdesktop.swingx.prompt.PromptSupport;
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import javax.swing.table.DefaultTableModel;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -48,61 +55,200 @@ class BackgroundPanel extends JPanel {
     }
 }
 
-class DashboardPanel extends JPanel {
-    public DashboardPanel() {
-        setBackground(Color.WHITE);
-        setPreferredSize(new Dimension(1200, 700));
-        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Add padding
 
-        GridBagLayout layout = new GridBagLayout();
-        setLayout(layout);
+
+class DashboardPanel extends JPanel {
+    private JTabbedPane tabbedPane;
+    private JTable table;
+    private JLabel totalAmountLabel;
+
+    public DashboardPanel(JFrame parentFrame) {
+        tabbedPane = new JTabbedPane();
+
+        JPanel panel1 = new JPanel(false);
+        panel1.setPreferredSize(new Dimension(800, 600)); // Set preferred size for Tab 1 content panel
+        panel1.setLayout(new GridBagLayout());
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.fill = GridBagConstraints.CENTER;
-
-        JLabel titleLabel = new JLabel("Dashboard");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        add(titleLabel, gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.insets = new Insets(10, 10, 10, 10);
+        JLabel AmountText = new JLabel("Add Amount to your account");
+        panel1.add(AmountText, gbc);
 
         gbc.gridy = 1;
-        JLabel welcomeLabel = new JLabel("Welcome to the Meal Management System!");
-        add(welcomeLabel, gbc);
+        JTextField textField = new JTextField(20);
+        PromptSupport.setPrompt("Enter amount", textField);
+        PromptSupport.setForeground(Color.BLACK, textField);
+        panel1.add(textField, gbc);
 
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        JButton sbbutton = new JButton("Submit");
+        panel1.add(sbbutton, gbc);
+
+        sbbutton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Connect conn = new Connect();
+                conn.upDateAccount(textField.getText());
+                System.out.println(textField.getText());
+
+                updateTableData(); // Refresh the table data
+            }
+        });
+
+        Session ss = new Session();
+        System.out.println("Session user");
+        System.out.println(ss.getSessionUser());
+
+        tabbedPane.addTab("Account", null, panel1, "Account tooltip");
+
+        JPanel panel2 = new JPanel(false);
+        panel2.setPreferredSize(new Dimension(800, 600)); // Set preferred size for Tab 2 content panel
+        panel2.setLayout(new GridBagLayout());
+
+        // Add components to panel2
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.insets = new Insets(10, 10, 10, 10);
+
+        JTextField textField1 = new JTextField(20);
+        PromptSupport.setPrompt("Enter today's cost amount", textField1);
+        PromptSupport.setForeground(Color.BLACK, textField1);
+        panel2.add(textField1, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        JButton button1 = new JButton("Submit");
+        panel2.add(button1, gbc);
+        button1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String aa = textField1.getText();
+                Connect conn = new Connect();
+                conn.updateAmount(aa);
+                updateTableData();
+            }
+        });
+
+        // Add components to panel2
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.insets = new Insets(10, 10, 10, 10);
+
+        JTextField textField2 = new JTextField(20);
+        PromptSupport.setPrompt("Enter personal cost amount", textField2);
+        PromptSupport.setForeground(Color.BLACK, textField2);
+        panel2.add(textField2, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        JButton button2 = new JButton("Submit");
+        panel2.add(button2, gbc);
+
+        button2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String aa = textField2.getText();
+                Connect conn = new Connect();
+                conn.personalUpdate(aa);
+                updateTableData();
+            }
+        });
+
+        gbc.gridx = 0;
         gbc.gridy = 2;
-        // String data[][] = { { "101", "Amit", "670000" },
-        // { "102", "Jai", "780000" },
-        // { "101", "Sachin", "700000" } };
-        // String column[] = { "ID", "NAME", "MONEY" };
-        // JTable jt = new JTable(data, column);
-        // jt.setBounds(50, 1, 1200, 700);
-        // JScrollPane sp = new JScrollPane(jt);
-        // add(sp, gbc);
-        // Create a DefaultTableModel
-        DefaultTableModel model = new DefaultTableModel();
+        gbc.gridwidth = 2;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.insets = new Insets(0, 10, 10, 10);
 
-        // Add columns to the model
-        model.addColumn("Name");
-        model.addColumn("Toll");
-        model.addColumn("Age");
+        // Create table with columns: Full Name, Total Amount, Today's Cost, Date
+        DefaultTableModel tableModel = new DefaultTableModel();
+        tableModel.addColumn("Full Name");
+        tableModel.addColumn("Total Amount");
+        tableModel.addColumn("Today's Cost");
+        tableModel.addColumn("Date");
 
-        Connect connect = new Connect();
-        JSONArray jsonArray = connect.ShowUser();
-        // Create the JTable using the model
-        JTable table;
-        table = new JTable(model);
-
-        // Add the table to a scroll pane
+        table = new JTable(tableModel);
         JScrollPane scrollPane = new JScrollPane(table);
-        add(scrollPane, gbc);
+
+        panel2.add(scrollPane, gbc);
+        float totalAmount = 0;
+        
+        Connect conn = new Connect();
+        JSONArray jsonArray = conn.ShowUser();
 
         for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject json = jsonArray.getJSONObject(i);
-            String first_name = json.getString("first_name");
-            String last_name = json.getString("first_name");
-            
-            model.addRow(new Object[]{ first_name, last_name});
+            JSONObject obj = jsonArray.getJSONObject(i);
+            String fullName = obj.getString("full_name");
+            float amount = obj.getFloat("total_amount");
+            float todayCost = obj.getFloat("today_cost");
+            String date = obj.getString("date");
+
+            Object[] rowData = { fullName, amount, todayCost, date };
+            tableModel.addRow(rowData);
+
+            totalAmount += amount;
+        }
+        totalAmountLabel = new JLabel("Total Amount: "+totalAmount);
+
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.weighty = 0.0;
+        gbc.anchor = GridBagConstraints.WEST;
+        panel2.add(totalAmountLabel, gbc);
+
+        tabbedPane.addTab("User Details", null, panel2, "User Details tooltip");
+
+        // Set the default selected tab to Tab 2
+        tabbedPane.setSelectedIndex(1);
+
+        setLayout(new GridLayout(1, 1));
+        add(tabbedPane);
+    }
+
+    public JTabbedPane getTabbedPane() {
+        return tabbedPane;
+    }
+
+    public JTable getTable() {
+        return table;
+    }
+
+    private void updateTableData() {
+        Connect conn = new Connect();
+        JSONArray jsonArray = conn.ShowUser();
+
+        DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
+        tableModel.setRowCount(0); // Clear existing rows
+
+        float totalAmount = 0.0f;
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject obj = jsonArray.getJSONObject(i);
+            String fullName = obj.getString("full_name");
+            float amount = obj.getFloat("total_amount");
+            float todayCost = obj.getFloat("today_cost");
+            String date = obj.getString("date");
+
+            Object[] rowData = { fullName, amount, todayCost, date };
+            tableModel.addRow(rowData);
+
+            totalAmount += amount;
         }
 
+        totalAmountLabel.setText("Total Amount: " + totalAmount);
+    }
+}
+
+class CustomTabbedPaneUI extends BasicTabbedPaneUI {
+    private static final int TAB_FONT_SIZE = 20;
+
+    @Override
+    protected int calculateTabHeight(int tabPlacement, int tabIndex, int fontHeight) {
+        return super.calculateTabHeight(tabPlacement, tabIndex, fontHeight + TAB_FONT_SIZE);
     }
 }
 
@@ -127,12 +273,82 @@ class Dashboard extends JFrame {
         gbc.insets = new Insets(20, 20, 20, 20); // Add padding
         backgroundPanel.add(headingLabel, gbc);
 
-        DashboardPanel dashboardPanel = new DashboardPanel();
+        Connect conn = new Connect();
+        System.out.println(conn.getUserData());
+        String Wlw = "User: " + conn.getUserData();
+        JLabel welUser = new JLabel(Wlw);
+        welUser.setFont(new Font("Arial", Font.BOLD, 24));
+
+        gbc.gridx = 0;
         gbc.gridy = 1;
+        gbc.weighty = 0.0; // Set weighty to 0 to prevent the heading from expanding vertically
+        gbc.insets = new Insets(20, 20, 20, 20); // Add padding
+        backgroundPanel.add(welUser, gbc);
+
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        JButton sbbutton = new JButton("Log Out");
+        backgroundPanel.add(sbbutton, gbc);
+
+        sbbutton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Login login = new Login();
+                login.setVisible(true);
+                dispose();
+            }
+        });
+
+        DashboardPanel dashboardPanel = new DashboardPanel(this);
+        gbc.gridy = 2;
+        gbc.gridx = 0;
         gbc.weighty = 1.0; // Set weighty to 1 to allow the DashboardPanel to expand vertically
         backgroundPanel.add(dashboardPanel, gbc);
 
+        // Customize the tab font size
+        JTabbedPane tabbedPane = dashboardPanel.getTabbedPane();
+        tabbedPane.setUI(new CustomTabbedPaneUI());
+
+        // Get the table
+        JTable table = dashboardPanel.getTable();
+
+        // Retrieve data from ShowUser() method
+        JSONArray jsonArray = conn.ShowUser();
+
+        Font tableFont = new Font("Arial", Font.PLAIN, 16);
+        table.setFont(tableFont);
+
+        // Populate the table with data
+        DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
+        tableModel.setRowCount(0); // Clear existing rows
+
+        float totalAmount = 0.0f;
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject obj = jsonArray.getJSONObject(i);
+            String fullName = obj.getString("full_name");
+            float amount = obj.getFloat("total_amount");
+            float todayCost = obj.getFloat("today_cost");
+            String date = obj.getString("date");
+
+            Object[] rowData = { fullName, amount, todayCost, date };
+            tableModel.addRow(rowData);
+
+            totalAmount += amount;
+        }
+
+        
+        System.out.println(totalAmount);
+
         pack();
-        setVisible(true);
+        setLocationRelativeTo(null); // Center the frame on the screen
     }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            Dashboard dashboard = new Dashboard();
+            dashboard.setVisible(true);
+        });
+    }
+
 }

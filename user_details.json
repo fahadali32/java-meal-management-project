@@ -1,0 +1,18 @@
+[
+    {
+        "date": "2023-06-05",
+        "full_name": "Fahad Ali",
+        "id": 9,
+        "today_cost": 0,
+        "total_amount": 1200,
+        "username": "fahad"
+    },
+    {
+        "date": "2023-06-09",
+        "full_name": "Yousuf Ali",
+        "id": 10,
+        "today_cost": 0,
+        "total_amount": 1119.5,
+        "username": "yousuf"
+    }
+]

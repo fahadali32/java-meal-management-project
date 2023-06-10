@@ -19,9 +19,9 @@ import org.jdesktop.swingx.prompt.PromptSupport;
 
 class BackgroundPanel extends JPanel {
     private Image backgroundImage;
-    
+
     public BackgroundPanel() {
-        
+
         try {
             // Load the background image
             backgroundImage = ImageIO.read(getClass().getResource("food.png"));
@@ -85,23 +85,23 @@ class ResizablePanel extends JPanel {
         gbc.gridy = 3;
         JButton loginBtn = new JButton("Submit");
         add(loginBtn, gbc);
-        
+
         loginBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-               
+
                 String uname = username.getText();
                 String passd = password.getText();
                 System.out.println(uname.length());
                 if (uname.length() != 0 && passd.length() != 0) {
-                    con.connect(uname,passd,parentFrame);
+                    con.connect(uname, passd, parentFrame);
+                    Session ss = new Session();
+                    ss.setSession(uname);
                     System.out.println("ok");
                 } else {
                     System.out.println("please at first fill up something");
                 }
-                
-                
-                
+
             }
         });
 
@@ -154,7 +154,5 @@ class Login extends JFrame {
         pack();
         setVisible(true);
     }
-    
-    
 
 }
