@@ -51,7 +51,7 @@ class BackgroundPanel extends JPanel {
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(1500, 900);
+        return new Dimension(1400, 900);
     }
 }
 
@@ -66,7 +66,7 @@ class DashboardPanel extends JPanel {
         tabbedPane = new JTabbedPane();
 
         JPanel panel1 = new JPanel(false);
-        panel1.setPreferredSize(new Dimension(800, 600)); // Set preferred size for Tab 1 content panel
+        panel1.setPreferredSize(new Dimension(600, 400)); // Set preferred size for Tab 1 content panel
         panel1.setLayout(new GridBagLayout());
 
         GridBagConstraints gbc = new GridBagConstraints();
@@ -105,15 +105,16 @@ class DashboardPanel extends JPanel {
         tabbedPane.addTab("Account", null, panel1, "Account tooltip");
 
         JPanel panel2 = new JPanel(false);
-        panel2.setPreferredSize(new Dimension(800, 600)); // Set preferred size for Tab 2 content panel
+        panel2.setPreferredSize(new Dimension(600, 400)); // Set preferred size for Tab 2 content panel
         panel2.setLayout(new GridBagLayout());
 
         // Add components to panel2
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.insets = new Insets(10, 10, 10, 10);
-
+        gbc.weightx = 1;
         JTextField textField1 = new JTextField(20);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        textField1.setPreferredSize(new Dimension(100, 100));
         PromptSupport.setPrompt("Enter today's cost amount", textField1);
         PromptSupport.setForeground(Color.BLACK, textField1);
         panel2.add(textField1, gbc);
@@ -159,7 +160,8 @@ class DashboardPanel extends JPanel {
 
         gbc.gridx = 0;
         gbc.gridy = 2;
-        gbc.gridwidth = 2;
+        gbc.gridwidth = 2; // Increase the gridwidth to make panel2 span 2 columns
+        gbc.weightx = 1.0; // Set weightx to 1.0 to allow panel2 to expand horizontally
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(0, 10, 10, 10);
